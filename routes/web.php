@@ -18,9 +18,9 @@ use App\Http\Controllers\SignUp;
 */
 
 Route::redirect('/', '/schedule');
- 
+
 Route::get('/schedule', Schedule::class);
 
-Route::match(['get', 'post'], '/signin', SignIn::class)->name('signin');
+Route::post('/signin', SignIn::class)->name('signin');
 
-Route::match(['get', 'post'], '/signup', SignUp::class);
+Route::post('/signup', SignUp::class);
