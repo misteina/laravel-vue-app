@@ -2,6 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Schedule;
+use App\Http\Controllers\SignIn;
+use App\Http\Controllers\SignUp;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,6 +17,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect('/', '/schedule');
+ 
+Route::get('/schedule', Schedule::class);
+
+Route::match(['get', 'post'], '/signin', SignIn::class)->name('signin');
+
+Route::match(['get', 'post'], '/signup', SignUp::class);
