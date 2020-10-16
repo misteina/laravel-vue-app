@@ -20,35 +20,69 @@ class Schedule extends Controller
 
         if (Auth::check()){
 
-            $schedulePeriod = $request->input('period', 'today');
-            $scheduleType = $request->input('type', 'other');
-
             if ($request->isMethod('get')){
 
-                if ($schedulePeriod !== 'today' && $schedulePeriod !== 'all' && !$this->validateDate($schedulePeriod)){
-                    $schedulePeriod = 'today';
+                $todosFrom = $request->input('from', date("Y-m-d 00:00:00"));
+                $todosTo = $request->input('to', date("Y-m-d 23:59:59"));
+                $todosCategory = $request->input('category', 'all');
+
+                if (!$this->validateDate($todosFrom) || !$this->validateDate($todosTo)){
+                    $todosFrom = date("Y-m-d 00:00:00");
+                    $todosTo = date("Y-m-d 23:59:59");
                 }
 
                 if (!ctype_alpha($scheduleType)){
-                    $scheduleType = 'other';
+                    $todosCategory = 'all';
                 }
 
-                if ($schedulePeriod === 'today'){
-                    try {
-                        DB::table('schedules')->where('id', Auth::id());
-                    } catch (Exception $e) {
-                        Log::error($e->getMessage());
-                        return response()->json(['error' => 'An error was encountered']);
-                    }
-                } else if ($this->validateDate($schedulePeriod)) {
+                if ($todosCategory === 'all'){
 
-                } else if ($schedulePeriod === 'all') {
-
+                    $todoList = DB::table('schedules')->select('title','body')
+                        ->where('id', Auth::id())
+                        ->where('todosFrom','>=',$todosFrom)
+                        ->where('todosTo','<=',$todosTo)
+                        ->orderBy('time', 'asc')
+                        ->get();
+                } else { 
+                    $todoList = DB::table('schedules')->select('title','body')
+                        ->where('id', Auth::id())
+                        ->where('todosCategory', $todosCategory)
+                        ->where('todosFrom','>=', $todosFrom)
+                        ->where('todosTo','<=', $todosTo)
+                        ->orderBy('time', 'asc')
+                        ->get();
                 }
-                
+
+                return response()->json($todoList);
 
             } else if ($request->isMethod('post')) {
 
+                $todoTitle = $request->input('title', null);
+                $todoBody = $request->input('body', 'No body');
+
+                if ($todoTitle === null){
+                    return response()->json(['error' => 'No title']);
+                }
+                if (strlen($todoBody) > 500){
+                    $todoBody = substr($todoBody, 500).'...';
+                }
+
+                DB::table('schedules')->updateOrInsert(
+                    [
+                        'id' => Auth::id(),
+                        'todo' => DB::raw(
+                            'JSON_MERGE_PRESERVE(todo,'.json_encode(
+                                [
+                                    'title' => $todoTitle, 
+                                    'body' => $todoBody,
+                                    'time' => date('Y-m-d H:i:s')
+                                ]).
+                            ')'
+                        )
+                    ]
+                );
+
+                return response()->json(['status' => 'done']);
             } else {
                 return response()->json(['error' => 'Bad request']);
             }
@@ -57,7 +91,7 @@ class Schedule extends Controller
         }
     }
 
-    private function validateDate($date, $format = 'Y-m-d') {
+    private function validateDate($date, $format = 'Y-m-d H:i:s') {
         $d = DateTime::createFromFormat($format, $date);
         return $d && $d->format($format) === $date;
     }

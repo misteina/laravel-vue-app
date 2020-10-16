@@ -31,8 +31,8 @@ class SignUp extends Controller
                 try {
                     DB::table('users')->insert($validatedData);
                 } catch(Exception $e) {
-                    Log::error($e->getMessage());
-                    return response()->json(['error' => 'An error was encountered']);
+                    //Log::error($e->getMessage());
+                    return response()->json(['error' => $e->getMessage()]);
                 }
 
                 return response()->json(['show' => 'schedule']);
