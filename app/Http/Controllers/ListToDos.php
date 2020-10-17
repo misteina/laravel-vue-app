@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -54,7 +55,7 @@ class ListToDos extends Controller
             return response()->json($todoList);
 
         } else {
-            return response()->json(['show' => 'todo']);
+            return response()->json(['error' => 'unauthorized']);
         }
     }
 

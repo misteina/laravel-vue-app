@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
 use Exception;
 
 class SignUp extends Controller
@@ -27,6 +29,8 @@ class SignUp extends Controller
                     'email' => 'required|email:filter',
                     'password' => 'required|min:5|max:20'
                 ]);
+
+                $validatedData['password'] = Hash::make($request->password);
                 
                 try {
                     DB::table('users')->insert($validatedData);
