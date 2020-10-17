@@ -25,7 +25,7 @@ class SignIn extends Controller
                 ]);
 
                 if (Auth::attempt($validatedData)) {
-                    return response()->json(['show' => 'schedule']);
+                    return response()->json(['show' => 'todo']);
                 } else {
                     return response()->json(['error' => 'Incorrect email or password']);
                 }
@@ -33,7 +33,7 @@ class SignIn extends Controller
                 return response()->json(['error' => 'Fill your email and password']);
             }
         } else {
-            return response()->json(['show' => 'schedule']);
+            return response()->json(['show' => 'todo']);
         }
     }
 }

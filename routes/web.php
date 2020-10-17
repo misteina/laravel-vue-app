@@ -2,9 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\Schedule;
 use App\Http\Controllers\SignIn;
 use App\Http\Controllers\SignUp;
+use App\Http\Controllers\ListToDos;
+use App\Http\Controllers\AddToDo;
+use App\Http\Controllers\DeleteToDo;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,9 +19,13 @@ use App\Http\Controllers\SignUp;
 |
 */
 
-Route::redirect('/', '/schedule');
+Route::redirect('/', '/todo');
 
-Route::match(['get','post'], '/schedule', Schedule::class);
+Route::get('/todo', ListToDos::class);
+
+Route::post('/todo/add', AddToDo::class);
+
+Route::get('/todo/delete', DeleteToDo::class);
 
 Route::post('/signin', SignIn::class)->name('signin');
 
