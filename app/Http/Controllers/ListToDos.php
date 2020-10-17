@@ -37,16 +37,16 @@ class ListToDos extends Controller
 
                 $todoList = DB::table('user_todos')->select('title','body')
                     ->where('id', Auth::id())
-                    ->where('todosFrom','>=',$todosFrom)
-                    ->where('todosTo','<=',$todosTo)
+                    ->where('range','>=',$todosFrom)
+                    ->where('range','<=',$todosTo)
                     ->orderBy('time', 'asc')
                     ->get();
             } else { 
                 $todoList = DB::table('user_todos')->select('title','body')
                     ->where('id', Auth::id())
                     ->where('todosCategory', $todosCategory)
-                    ->where('todosFrom','>=', $todosFrom)
-                    ->where('todosTo','<=', $todosTo)
+                    ->where('range','>=', $todosFrom)
+                    ->where('range','<=', $todosTo)
                     ->orderBy('time', 'asc')
                     ->get();
             }

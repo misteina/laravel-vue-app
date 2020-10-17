@@ -21,21 +21,26 @@ class AddToDo extends Controller {
 
             $todoTitle = $request->input('title', null);
             $todoBody = $request->input('body', 'No body');
+            $todoCategory = $request->input('category', 'other');
 
-            if ($todoTitle === null){
+            if ($todoTitle === null || empty(trim($todoTitle))){
                 return response()->json(['error' => 'No title']);
             }
             if (strlen($todoBody) > 500){
                 $todoBody = substr($todoBody, 500).'...';
+            }
+            if (!ctype_alpha($todoCategory)){
+                return response()->json(['error' => 'No category']);
             }
 
             DB::table('user_todos')->updateOrInsert(
                 ['id' => Auth::id()],
                 [
                     'todo' => DB::raw(
-                        'JSON_MERGE_PRESERVE(todo,'.json_encode(
+                        'JSON_MERGE_PRESERVE(IFNULL(todo, \'[]\'),'.json_encode(
                             [
                                 date('Y-m-d H:i:s') => [
+                                    'category' => $todoCategory,
                                     'title' => $todoTitle, 
                                     'body' => $todoBody,
                                 ]
