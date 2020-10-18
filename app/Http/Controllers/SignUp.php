@@ -25,7 +25,7 @@ class SignUp extends Controller
             if ($request->has(['name', 'email', 'password'])){
 
                 $validatedData = $request->validate([
-                    'name' => 'required|min:2|max:30|regex:/^a-zA-Z\s/i',
+                    'name' => 'required|min:2|max:30|regex:/^[a-zA-Z ]+$/i',
                     'email' => 'required|email:filter',
                     'password' => 'required|min:5|max:20'
                 ]);
@@ -39,12 +39,12 @@ class SignUp extends Controller
                     return response()->json(['error' => $e->getMessage()]);
                 }
 
-                return response()->json(['show' => 'schedule']);
+                return response()->json(['success' => 'done']);
             } else {
                 return response()->json(['error' => 'Fill the form completely']);
             }
         } else {
-            return response()->json(['show' => 'schedule']);
+            return response()->json(['show' => 'todo']);
         }
     }
 }
