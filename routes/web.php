@@ -7,6 +7,7 @@ use App\Http\Controllers\SignUp;
 use App\Http\Controllers\ListToDos;
 use App\Http\Controllers\AddToDo;
 use App\Http\Controllers\DeleteToDo;
+use App\Http\Controllers\LogOut;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,3 +31,5 @@ Route::get('/todo/delete', DeleteToDo::class);
 Route::post('/signin', SignIn::class)->name('signin');
 
 Route::post('/signup', SignUp::class);
+
+Route::get('logout', LogOut::class);

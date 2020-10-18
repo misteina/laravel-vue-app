@@ -26,7 +26,7 @@ class SignIn extends Controller
                 ]);
 
                 if (Auth::attempt($validatedData)) {
-                    return response()->json(['show' => 'todo']);
+                    return response()->json(['success' => 'done']);
                 } else {
                     return response()->json(['error' => 'Incorrect email or password']);
                 }

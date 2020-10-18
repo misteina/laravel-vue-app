@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 //use Illuminate\Support\Facades\Log;
-//use Exception;
+use Exception;
 
 class AddToDo extends Controller {
     /**
@@ -27,6 +27,9 @@ class AddToDo extends Controller {
             if ($todoTitle === null || empty(trim($todoTitle))){
                 return response()->json(['error' => 'No title']);
             }
+            if (strlen(trim($todoTitle)) > 50){
+                $todoTitle = substr($todoTitle, 50).'...';
+            }
             if (strlen($todoBody) > 500){
                 $todoBody = substr($todoBody, 500).'...';
             }
@@ -34,24 +37,18 @@ class AddToDo extends Controller {
                 return response()->json(['error' => 'No category']);
             }
 
-            DB::table('user_todos')->updateOrInsert(
-                ['id' => Auth::id()],
-                [
-                    'todo' => DB::raw(
-                        'JSON_MERGE_PRESERVE(IFNULL(todo, \'[]\'),'.json_encode(
-                            [
-                                date('Y-m-d H:i:s') => [
-                                    'category' => $todoCategory,
-                                    'title' => $todoTitle, 
-                                    'body' => $todoBody,
-                                ]
-                            ]).
-                        ')'
-                    )
-                ]
-            );
+            try {
+                DB::table('user_todos')->updateOrInsert(
+                    ['id' => Auth::id()],
+                    [
+                        'todo' => '{"time":{"title":"My title","body":"Todo details","category":"other"}}'
+                    ]
+                );
+            } catch (Exception $e) {
+                return response()->json(['error' => $e->getMessage()]);
+            }
 
-            return response()->json(['status' => 'done']);
+            return response()->json(['success' => 'done']);
 
         } else {
             return response()->json(['show' => 'todo']);
