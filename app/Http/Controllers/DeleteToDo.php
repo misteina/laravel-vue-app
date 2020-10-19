@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\App;
 
 class DeleteToDo extends Controller
 {
@@ -19,24 +22,31 @@ class DeleteToDo extends Controller
 
             $todoId = $request->input('id', null);
 
-            if (!$this.validateDate($todoId)){
+            if (!$this->validateDate($todoId)){
                 return response()->json(['error' => 'No Id']);
             }
 
             DB::table('user_todos')
                 ->where('id', Auth::id())
-                ->update(['todo' => DB::raw('JSON_MERGE_PATCH(todo, {"'.$todoId.'": null})')]
-            );
+                ->update(['todo' => DB::raw('JSON_MERGE_PATCH(todo, \'{"'.$todoId.'": null}\')')]);
 
-            return response()->json(['status' => 'done']);
+            if (App::environment('testing')) {
+                $todos = DB::table('user_todos')->select('todo')
+                    ->where('id', Auth::id())
+                    ->get();
+
+                return response()->json(['todos' => $todos]);
+            }
+
+            return response()->json(['success' => 'done']);
             
         } else {
-            return response()->json(['show' => 'todo']);
+            return response()->json(['error' => 'unauthorized']);
         }
     }
 
     private function validateDate($date, $format = 'Y-m-d H:i:s') {
-        $d = DateTime::createFromFormat($format, $date);
+        $d = date_create_from_format($format, $date);
         return $d && $d->format($format) === $date;
     }
 }

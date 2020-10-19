@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\App;
 //use Illuminate\Support\Facades\Log;
 use Exception;
 
@@ -56,6 +57,14 @@ class AddToDo extends Controller {
                     )
                 ]
             );
+
+            if (App::environment('testing')) {
+                $todos = DB::table('user_todos')->select('todo')
+                    ->where('id', Auth::id())
+                    ->get();
+
+                return response()->json(['todos' => $todos]);
+            }
 
             return response()->json(['success' => 'done']);
 

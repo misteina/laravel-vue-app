@@ -14,15 +14,7 @@ class BackEndTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function dumpResponse($response){
-        if (isset($response->getData()->message)){
-            var_dump($response->getData()->message);
-        } else {
-            $response->dump();
-        }
-    }
-
-    /*public function testDisallowUnregisteredUsers(){
+    public function testDisallowUnregisteredUsers(){
         $response = $this->get('/todo');
         $response->assertJson(['error' => 'unauthorized']);
     }
@@ -131,7 +123,7 @@ class BackEndTest extends TestCase
             '/todo/add',
             ['title' => 'My Todo title', 'body' => 'My Todo body', 'category' => 'other']
         );
-        $this->assertDatabaseHas('user_todos', ['id' => 1]);
+        $response->assertSeeText('My Todo title');
     }
 
 
@@ -161,7 +153,6 @@ class BackEndTest extends TestCase
         $user = User::factory()->has(UserTodo::factory())->create();
         $response = $this->actingAs($user)->getJson('/todo');
         $response->assertJsonStructure([['2020-10-12 00:00:00'], ['2020-10-15 22:00:00']]);
-        //$this->dumpResponse($response);
     }
 
 
@@ -173,5 +164,32 @@ class BackEndTest extends TestCase
             ['category' => 'other']
         );
         $response->assertJsonStructure([['2020-10-12 00:00:00']]);
+    }
+
+
+    public function testDeleteTodoItem(){
+        $user = User::factory()->has(UserTodo::factory())->create();
+        $response = $this->actingAs($user)->json(
+            'POST',
+            '/todo/delete',
+            ['id' => '2020-10-15 22:00:00']
+        );
+        $response->assertDontSeeText('2020-10-15 22:00:00');
+    }
+
+
+    public function testUserLogOut(){
+        $user = User::factory()->make();
+        $response = $this->actingAs($user)->json('GET', '/logout');
+        $response->assertRedirect('/signin');
+    }
+
+
+    /*private function dumpResponse($response){
+        if (isset($response->getData()->message)){
+            var_dump($response->getData()->message);
+        } else {
+            $response->dump();
+        }
     }*/
 }

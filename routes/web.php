@@ -26,10 +26,10 @@ Route::get('/todo', ListToDos::class);
 
 Route::post('/todo/add', AddToDo::class);
 
-Route::get('/todo/delete', DeleteToDo::class);
+Route::post('/todo/delete', DeleteToDo::class);
 
 Route::post('/signin', SignIn::class)->name('signin');
 
 Route::post('/signup', SignUp::class);
 
-Route::get('logout', LogOut::class);
+Route::get('/logout', LogOut::class);

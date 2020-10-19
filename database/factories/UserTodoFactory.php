@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\UserTodo;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UserTodoFactory extends Factory
@@ -22,7 +23,7 @@ class UserTodoFactory extends Factory
     public function definition()
     {
         return [
-            'id' => 1,
+            'id' => Auth::id(),
             'todo' => json_encode(
                 [
                     '2020-10-12 00:00:00' =>

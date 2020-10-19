@@ -16,6 +16,10 @@ class LogOut extends Controller
     public function __invoke(Request $request)
     {
         Auth::logout();
-        return redirect('signin');
+        if (Auth::check()){
+            return response()->json(['error' => 'failed']);
+        } else {
+            return redirect('signin');
+        }
     }
 }
