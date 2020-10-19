@@ -37,16 +37,25 @@ class AddToDo extends Controller {
                 return response()->json(['error' => 'No category']);
             }
 
-            try {
-                DB::table('user_todos')->updateOrInsert(
-                    ['id' => Auth::id()],
-                    [
-                        'todo' => '{"time":{"title":"My title","body":"Todo details","category":"other"}}'
-                    ]
-                );
-            } catch (Exception $e) {
-                return response()->json(['error' => $e->getMessage()]);
-            }
+            DB::table('user_todos')->updateOrInsert(
+                ['id' => Auth::id()],
+                [
+                    'todo' => DB::raw(
+                        'JSON_MERGE_PRESERVE(IFNULL(todo, \'[]\'), \''.
+                            json_encode(
+                                [
+                                    date('Y-m-d H:i:s') =>
+                                    [
+                                        'title' => $todoTitle,
+                                        'body' => $todoBody,
+                                        'category'=> $todoCategory
+                                    ]
+                                ]
+                            ).
+                        '\')'
+                    )
+                ]
+            );
 
             return response()->json(['success' => 'done']);
 

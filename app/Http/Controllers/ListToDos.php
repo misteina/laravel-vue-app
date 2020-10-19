@@ -21,35 +21,45 @@ class ListToDos extends Controller
 
         if (Auth::check()){
 
-            $todosFrom = $request->input('from', date("Y-m-d 00:00:00"));
+            $todosFrom = $request->input('from', '2020-10-10 00:00:00');
             $todosTo = $request->input('to', date("Y-m-d 23:59:59"));
             $todosCategory = $request->input('category', 'all');
 
             if (!$this->validateDate($todosFrom) || !$this->validateDate($todosTo)){
-                $todosFrom = date("Y-m-d 00:00:00");
+                $todosFrom = '2020-10-10 00:00:00';
                 $todosTo = date("Y-m-d 23:59:59");
             }
 
-            if (!ctype_alpha($scheduleType)){
+            if (!ctype_alpha($todosCategory)){
                 $todosCategory = 'all';
             }
 
-            if ($todosCategory === 'all'){
+            $todos = DB::table('user_todos')->select('todo')
+                ->where('id', Auth::id())
+                ->get();
 
-                $todoList = DB::table('user_todos')->select('title','body')
-                    ->where('id', Auth::id())
-                    ->where('range','>=',$todosFrom)
-                    ->where('range','<=',$todosTo)
-                    ->orderBy('time', 'asc')
-                    ->get();
-            } else { 
-                $todoList = DB::table('user_todos')->select('title','body')
-                    ->where('id', Auth::id())
-                    ->where('todosCategory', $todosCategory)
-                    ->where('range','>=', $todosFrom)
-                    ->where('range','<=', $todosTo)
-                    ->orderBy('time', 'asc')
-                    ->get();
+            $todos = json_decode($todos[0]->todo, true);
+
+            $todoList = [];
+
+            if ($todosCategory !== 'all'){
+                foreach ($todos as $time => $todo){
+                    $dateFrom = date_create($todosFrom);
+                    $dateTo = date_create($todosTo);
+                    $addedTime = date_create($time);
+                    if ($todosCategory === $todo['category'] && $addedTime >= $dateFrom && $addedTime <= $dateTo){
+                        array_push($todoList, [$time => $todo]);
+                    }
+                }
+            } else {
+                foreach ($todos as $time => $todo){
+                    $dateFrom = date_create($todosFrom);
+                    $dateTo = date_create($todosTo);
+                    $addedTime = date_create($time);
+                    if ($addedTime >= $dateFrom && $addedTime <= $dateTo){
+                        array_push($todoList, [$time => $todo]);
+                    }
+                }
             }
 
             return response()->json($todoList);
@@ -60,7 +70,7 @@ class ListToDos extends Controller
     }
 
     private function validateDate($date, $format = 'Y-m-d H:i:s') {
-        $d = DateTime::createFromFormat($format, $date);
+        $d = date_create_from_format($format, $date);
         return $d && $d->format($format) === $date;
     }
 }

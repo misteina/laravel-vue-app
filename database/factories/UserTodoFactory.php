@@ -23,7 +23,22 @@ class UserTodoFactory extends Factory
     {
         return [
             'id' => 1,
-            'todo' => '{"time":{"title":"My title","body":"Todo details","category":"other"}}'
+            'todo' => json_encode(
+                [
+                    '2020-10-12 00:00:00' =>
+                    [
+                        'title' => 'My title',
+                        'body' => 'Todo details',
+                        'category' => 'other'
+                    ],
+                    '2020-10-15 22:00:00' =>
+                    [
+                        'title' => 'My title 2',
+                        'body' => 'Todo details 2',
+                        'category' => 'meeting'
+                    ]
+                ]
+            )
         ];
     }
 }

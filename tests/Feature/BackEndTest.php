@@ -12,7 +12,15 @@ use Tests\TestCase;
 
 class BackEndTest extends TestCase
 {
-    //use RefreshDatabase;
+    use RefreshDatabase;
+
+    private function dumpResponse($response){
+        if (isset($response->getData()->message)){
+            var_dump($response->getData()->message);
+        } else {
+            $response->dump();
+        }
+    }
 
     /*public function testDisallowUnregisteredUsers(){
         $response = $this->get('/todo');
@@ -116,6 +124,17 @@ class BackEndTest extends TestCase
     }
 
 
+    public function testAddNewTodoItem(){
+        $user = User::factory()->create();
+        $response = $this->actingAs($user)->json(
+            'POST', 
+            '/todo/add',
+            ['title' => 'My Todo title', 'body' => 'My Todo body', 'category' => 'other']
+        );
+        $this->assertDatabaseHas('user_todos', ['id' => 1]);
+    }
+
+
     public function testRejectAddTodoItemWithNoTitle(){
         $user = User::factory()->make();
         $response = $this->actingAs($user)->json(
@@ -135,16 +154,24 @@ class BackEndTest extends TestCase
             ['title' => 'My Todo title', 'body' => '', 'category' => '']
         );
         $response->assertJson(['error' => 'No category']);
-    }*/
-
-
-    public function testAddNewTodoItem(){
-        $user = User::factory()->make();
-        $response = $this->actingAs($user)->json(
-            'POST', 
-            '/todo/add',
-            ['title' => 'My Todo title', 'body' => 'My Todo body', 'category' => 'other']
-        );
-        $this->assertDatabaseHas('user_todos', ['id' => 1]);
     }
+
+
+    public function testListAllTodoItems(){
+        $user = User::factory()->has(UserTodo::factory())->create();
+        $response = $this->actingAs($user)->getJson('/todo');
+        $response->assertJsonStructure([['2020-10-12 00:00:00'], ['2020-10-15 22:00:00']]);
+        //$this->dumpResponse($response);
+    }
+
+
+    public function testListTodoItemsByCategory(){
+        $user = User::factory()->has(UserTodo::factory())->create();
+        $response = $this->actingAs($user)->json(
+            'GET',
+            '/todo',
+            ['category' => 'other']
+        );
+        $response->assertJsonStructure([['2020-10-12 00:00:00']]);
+    }*/
 }
