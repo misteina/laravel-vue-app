@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="css/boostrap-4.5.3.css">
+    
+    <!-- vue -->
+    <script src="js/vue.js"></script>
+
+    <title>TODO Application</title>
+  </head>
+  <body>
+
+    <div id="app"></div>
+
+    <!-- jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="js/jquery-3.5.1.js"></script>
+    <script src="js/boostrap-4.5.3.js"></script>
+  </body>
+</html>

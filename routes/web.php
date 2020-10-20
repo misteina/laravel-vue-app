@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Index;
 use App\Http\Controllers\SignIn;
 use App\Http\Controllers\SignUp;
 use App\Http\Controllers\ListToDos;
@@ -22,7 +23,13 @@ use App\Http\Controllers\LogOut;
 
 Route::redirect('/', '/todo');
 
-Route::get('/todo', ListToDos::class);
+Route::get('/todo', Index::class);
+
+Route::get('/signup', Index::class);
+
+Route::get('/signin', Index::class);
+
+Route::post('/todo/list', ListToDos::class);
 
 Route::post('/todo/add', AddToDo::class);
 

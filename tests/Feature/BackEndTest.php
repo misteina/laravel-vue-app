@@ -16,7 +16,7 @@ class BackEndTest extends TestCase
 
     public function testDisallowUnregisteredUsers(){
         $response = $this->get('/todo');
-        $response->assertJson(['error' => 'unauthorized']);
+        $response->assertRedirect('signin');
     }
 
 
@@ -151,7 +151,7 @@ class BackEndTest extends TestCase
 
     public function testListAllTodoItems(){
         $user = User::factory()->has(UserTodo::factory())->create();
-        $response = $this->actingAs($user)->getJson('/todo');
+        $response = $this->actingAs($user)->postJson('/todo/list');
         $response->assertJsonStructure([['2020-10-12 00:00:00'], ['2020-10-15 22:00:00']]);
     }
 
@@ -159,8 +159,8 @@ class BackEndTest extends TestCase
     public function testListTodoItemsByCategory(){
         $user = User::factory()->has(UserTodo::factory())->create();
         $response = $this->actingAs($user)->json(
-            'GET',
-            '/todo',
+            'POST',
+            '/todo/list',
             ['category' => 'other']
         );
         $response->assertJsonStructure([['2020-10-12 00:00:00']]);
