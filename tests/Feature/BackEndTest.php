@@ -180,7 +180,7 @@ class BackEndTest extends TestCase
 
     public function testUserLogOut(){
         $user = User::factory()->make();
-        $response = $this->actingAs($user)->json('GET', '/logout');
+        $response = $this->actingAs($user)->json('POST', '/logout');
         $response->assertRedirect('/signin');
     }
 

@@ -32,4 +32,4 @@ Route::post('/signin', SignIn::class)->name('signin');
 
 Route::post('/signup', SignUp::class);
 
-Route::get('/logout', LogOut::class);
+Route::post('/logout', LogOut::class);
