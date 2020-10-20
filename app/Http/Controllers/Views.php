@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class Index extends Controller
+class Views extends Controller
 {
     /**
      * Handle the incoming request.
@@ -26,6 +26,6 @@ class Index extends Controller
             return redirect('todo');
         }
 
-        return view('index');
+        return view($path);
     }
 }

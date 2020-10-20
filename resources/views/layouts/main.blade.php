@@ -15,7 +15,9 @@
   </head>
   <body>
 
-    <div id="app"></div>
+    <div id="app">
+        @yield('content')
+    </div>
 
     <!-- jQuery and Bootstrap Bundle (includes Popper) -->
     <script src="js/jquery-3.5.1.js"></script>

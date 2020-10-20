@@ -11,7 +11,7 @@ const routes = {
     '/todo': ToDo
 }
 
-const App = {
+const Page = {
     data: () => ({
         currentRoute: window.location.pathname
     }),
@@ -27,4 +27,4 @@ const App = {
     }
 }
 
-Vue.createApp(App).mount('#app');
+Vue.createApp(Page).mount('#app');
