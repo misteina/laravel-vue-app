@@ -7,6 +7,8 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="css/boostrap-4.5.3.css">
+
+    <link rel="stylesheet" href="css/app.css">
     
     <!-- vue -->
     <script src="js/vue.js"></script>
@@ -15,8 +17,10 @@
   </head>
   <body>
 
-    <div id="app">
-        @yield('content')
+    <div id="app" class="container-fliud">
+        @section('content')
+        <div class="container-fliud header"><h1>TODO</h1></div>
+        @show
     </div>
 
     <!-- jQuery and Bootstrap Bundle (includes Popper) -->
