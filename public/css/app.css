@@ -21,7 +21,7 @@
     margin: auto;
 }
 .todo-list{
-    max-width: 660px;
+    max-width: 500px;
     min-width: 300px;
     margin: auto;
     padding: 0 10px 20px;
@@ -31,10 +31,11 @@
     margin-bottom: 20px;
 }
 .category{
+    width: 30%;
     float: right;
 }
 .date{
-    width: 25%;
+    width:30%;
     display: inline-block;
 }
 .list{
@@ -53,7 +54,7 @@ label{
 }
 #add-todo{
     width: 100%;
-    max-width: 638px;
+    max-width: 482px;
     min-width: 300px;
     margin: auto;
 }

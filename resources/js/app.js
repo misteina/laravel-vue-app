@@ -1,30 +1,14 @@
 require('./bootstrap');
 
 import SignIn from './SignIn';
-import ToDo from './ToDo';
-import SignUp from './SignUp';
+//import ToDo from './ToDo';
+//import SignUp from './SignUp';
+
+const Routes = {
+    '/signin': SignIn,
+    //'/signup': SignUp,
+    //'/todo' : Todo
+};
 
 
-const routes = {
-    '/signIn': SignIn,
-    '/SignUp': SignUp,
-    '/todo': ToDo
-}
-
-const Page = {
-    data: () => ({
-        currentRoute: window.location.pathname
-    }),
-
-    computed: {
-        CurrentComponent() {
-            return routes[this.currentRoute] || NotFoundComponent
-        }
-    },
-
-    render() {
-        return Vue.h(this.CurrentComponent)
-    }
-}
-
-Vue.createApp(Page).mount('#app');
+Vue.createApp(Routes[window.location.pathname]).mount('#app');

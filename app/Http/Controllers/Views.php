@@ -17,14 +17,14 @@ class Views extends Controller
     {
         $path = $request->path();
 
-        /*if (!Auth::check() && $path === 'todo'){
+        if (!Auth::check() && $path === 'todo'){
 
             return redirect('signin');
 
         } else if (Auth::check() && ($path === 'signin' || $path === 'signup')) {
             
             return redirect('todo');
-        }*/
+        }
 
         return view($path);
     }

@@ -152,7 +152,7 @@ class BackEndTest extends TestCase
     public function testListAllTodoItems(){
         $user = User::factory()->has(UserTodo::factory())->create();
         $response = $this->actingAs($user)->postJson('/todo/list');
-        $response->assertJsonStructure([['2020-10-12 00:00:00'], ['2020-10-15 22:00:00']]);
+        $response->assertSeeTextInOrder(['2020-10-12 00:00:00','other']);
     }
 
 
@@ -163,7 +163,7 @@ class BackEndTest extends TestCase
             '/todo/list',
             ['category' => 'other']
         );
-        $response->assertJsonStructure([['2020-10-12 00:00:00']]);
+        $response->assertSeeTextInOrder(['2020-10-12 00:00:00','other']);
     }
 
 

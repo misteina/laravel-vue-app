@@ -24,6 +24,7 @@
     </div>
 
     <!-- jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="js/app.js"></script>
     <script src="js/jquery-3.5.1.js"></script>
     <script src="js/boostrap-4.5.3.js"></script>
   </body>

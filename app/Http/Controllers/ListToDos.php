@@ -41,6 +41,7 @@ class ListToDos extends Controller
             $todos = json_decode($todos[0]->todo, true);
 
             $todoList = [];
+            $categories = [];
 
             if ($todosCategory !== 'all'){
                 foreach ($todos as $time => $todo){
@@ -49,6 +50,9 @@ class ListToDos extends Controller
                     $addedTime = date_create($time);
                     if ($todosCategory === $todo['category'] && $addedTime >= $dateFrom && $addedTime <= $dateTo){
                         array_push($todoList, [$time => $todo]);
+                    }
+                    if (!in_array($todo['category'], $categories)){
+                        array_push($categories, $todo['category']);
                     }
                 }
             } else {
@@ -59,10 +63,13 @@ class ListToDos extends Controller
                     if ($addedTime >= $dateFrom && $addedTime <= $dateTo){
                         array_push($todoList, [$time => $todo]);
                     }
+                    if (!in_array($todo['category'], $categories)){
+                        array_push($categories, $todo['category']);
+                    }
                 }
             }
 
-            return response()->json($todoList);
+            return response()->json([$todoList, $categories]);
 
         } else {
             return response()->json(['error' => 'unauthorized']);
