@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class SignIn extends Controller
 {
@@ -22,10 +23,12 @@ class SignIn extends Controller
 
                 $request->flashExcept('password');
 
-                $validatedData = $request->validate([
+                $request->validate([
                     'email' => 'required|email:filter',
                     'password' => 'required|min:5|max:20'
                 ]);
+
+                $validatedData = $request->only('email', 'password');
 
                 if (Auth::attempt($validatedData)) {
                     return redirect('/todo');

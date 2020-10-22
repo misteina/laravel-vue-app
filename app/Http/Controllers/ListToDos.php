@@ -38,41 +38,53 @@ class ListToDos extends Controller
                 ->where('id', Auth::id())
                 ->get();
 
-            $todos = json_decode($todos[0]->todo, true);
+            if (count($todos) > 0){
+                $todos = json_decode($todos[0]->todo, true);
 
-            $todoList = [];
-            $categories = [];
+                $todoList = [];
+                $categories = [];
 
-            if ($todosCategory !== 'all'){
-                foreach ($todos as $time => $todo){
-                    $dateFrom = date_create($todosFrom);
-                    $dateTo = date_create($todosTo);
-                    $addedTime = date_create($time);
-                    if ($todosCategory === $todo['category'] && $addedTime >= $dateFrom && $addedTime <= $dateTo){
-                        array_push($todoList, [$time => $todo]);
+                if ($todosCategory !== 'all'){
+                    foreach ($todos as $time => $todo){
+                        $dateFrom = date_create($todosFrom);
+                        $dateTo = date_create($todosTo);
+                        $addedTime = date_create($time);
+                        if ($todosCategory === $todo['category'] && $addedTime >= $dateFrom && $addedTime <= $dateTo){
+                            array_push($todoList, [$time => $todo]);
+                        }
+                        if (!in_array($todo['category'], $categories)){
+                            array_push($categories, $todo['category']);
+                        }
                     }
-                    if (!in_array($todo['category'], $categories)){
-                        array_push($categories, $todo['category']);
+                } else {
+                    foreach ($todos as $time => $todo){
+                        $dateFrom = date_create($todosFrom);
+                        $dateTo = date_create($todosTo);
+                        $addedTime = date_create($time);
+                        if ($addedTime >= $dateFrom && $addedTime <= $dateTo){
+                            array_push($todoList, [$time => $todo]);
+                        }
+                        if (!in_array($todo['category'], $categories)){
+                            array_push($categories, $todo['category']);
+                        }
                     }
                 }
+
+                ksort($todoList);
+
+                $data = [$todoList, $categories];
+
             } else {
-                foreach ($todos as $time => $todo){
-                    $dateFrom = date_create($todosFrom);
-                    $dateTo = date_create($todosTo);
-                    $addedTime = date_create($time);
-                    if ($addedTime >= $dateFrom && $addedTime <= $dateTo){
-                        array_push($todoList, [$time => $todo]);
-                    }
-                    if (!in_array($todo['category'], $categories)){
-                        array_push($categories, $todo['category']);
-                    }
-                }
+                $data = [0];
             }
 
-            return response()->json([$todoList, $categories]);
-
+            if ($request->has('ajax')){
+                return response()->json($data);
+            } else {
+                return view('/todo', ['todoData' => json_encode($data)]);
+            }
         } else {
-            return response()->json(['error' => 'unauthorized']);
+            return redirect('/signin');
         }
     }
 

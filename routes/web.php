@@ -23,19 +23,17 @@ use App\Http\Controllers\LogOut;
 
 Route::redirect('/', '/todo');
 
-Route::get('/todo', Views::class);
-
 Route::get('/signup', Views::class);
 
 Route::get('/signin', Views::class);
 
-Route::post('/todo/list', ListToDos::class);
+Route::get('/todo', ListToDos::class);
 
 Route::post('/todo/add', AddToDo::class);
 
 Route::post('/todo/delete', DeleteToDo::class);
 
-Route::post('/signin', SignIn::class)->name('signin');
+Route::post('/signin', SignIn::class);
 
 Route::post('/signup', SignUp::class);
 

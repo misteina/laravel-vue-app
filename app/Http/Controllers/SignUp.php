@@ -6,9 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
-use Exception;
+
 
 class SignUp extends Controller
 {
@@ -22,29 +21,32 @@ class SignUp extends Controller
     {
         if (!Auth::check()){
 
-            if ($request->has(['name', 'email', 'password'])){
+            if ($request->has(['email', 'name', 'password'])){
 
-                $validatedData = $request->validate([
+                $request->flashExcept('password');
+
+                $request->validate([
                     'name' => 'required|min:2|max:30|regex:/^[a-zA-Z ]+$/i',
                     'email' => 'required|email:filter',
                     'password' => 'required|min:5|max:20'
                 ]);
 
-                $validatedData['password'] = Hash::make($request->password);
-                
-                try {
-                    DB::table('users')->insert($validatedData);
-                } catch(Exception $e) {
-                    //Log::error($e->getMessage());
-                    return response()->json(['error' => $e->getMessage()]);
-                }
+                $validatedData = $request->only('email', 'name', 'password');
 
-                return response()->json(['success' => 'done']);
+                $validatedData['password'] = Hash::make($request->password);
+
+                $id = DB::table('users')->insertGetId($validatedData);
+
+                if (is_int($id)){
+                    return view('/signin', ['registered' => true]);
+                } else {
+                    return view('/signup', ['error' => ['An error was encountered '.$id]]);
+                }
             } else {
-                return response()->json(['error' => 'Fill the form completely']);
+                return redirect('/signup');
             }
         } else {
-            return response()->json(['show' => 'todo']);
+            return redirect('/todo');
         }
     }
 }

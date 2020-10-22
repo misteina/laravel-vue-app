@@ -1,11 +1,19 @@
+a{
+    color: grey;
+}
 .header{
     text-align: center;
     padding: 20px 20px;
 }
 .form-title{
+    display: inline-block;
     font-weight: bold;
     font-size: 20px;
     margin-bottom: 10px;
+}
+.form-title + a{
+    color: grey;
+    font-size: 14px;
 }
 .form {
     min-width: 300px;
@@ -75,6 +83,9 @@ label{
 }
 .todo-title {
     width: 65%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 	font-size: 18px;
 	font-weight: bold;
 	display: inline-block;

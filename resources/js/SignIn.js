@@ -1,11 +1,9 @@
-const initial = document.getElementById("oldEmail").value;
-
 const SignIn = {
     data() {
         return {
-            email: initial,
+            email: '',
             password: '',
-            showError: 'display: none'
+            showError: false
         }
     },
     methods: {
@@ -14,11 +12,14 @@ const SignIn = {
                 event.preventDefault();
             }
             if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email) && this.password.length > 4){
-                document.getElementById("signin").submit();
+                this.$refs.signin.submit();
             } else {
-                this.showError = 'display: block';
+                this.showError = true;
             }
         }
+    },
+    mounted(){
+        this.email = this.$refs.oldEmail.value;
     }
 }
 

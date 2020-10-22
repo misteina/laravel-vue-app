@@ -16,7 +16,7 @@ class BackEndTest extends TestCase
 
     public function testDisallowUnregisteredUsers(){
         $response = $this->get('/todo');
-        $response->assertRedirect('signin');
+        $response->assertRedirect('/signin');
     }
 
 
@@ -39,6 +39,15 @@ class BackEndTest extends TestCase
         $response->assertStatus(422);
     }
 
+    public function testRegectSignupWithInvalidPasswordInput(){
+        $response = $this->json(
+            'POST', 
+            '/signup', 
+            ['name' => 'Peter', 'email' => 'hello', 'password'=>'']
+        );
+        $response->assertStatus(422);
+    }
+
 
     public function testCheckSuccessfulSignup(){
         $response = $this->json(
@@ -46,10 +55,7 @@ class BackEndTest extends TestCase
             '/signup',
             ['name' => 'Peter', 'email' => 'hello@you.com', 'password'=>'uy86ut']
         );
-        $this->assertDatabaseHas(
-            'users', 
-            ['name' => 'Peter']
-        );
+        $response->assertViewHas('registered');
     }
 
 
@@ -73,7 +79,7 @@ class BackEndTest extends TestCase
             '/signin',
             ['email' => 'good@you.com', 'password'=>'uy86ut']
         );
-        $response->assertRedirect('/signin');
+        $response->assertViewHas('error');
     }
 
 
@@ -97,7 +103,7 @@ class BackEndTest extends TestCase
             '/signin',
             ['email' => 'hello@you.com', 'password'=>'0e8ryd']
         );
-        $response->assertRedirect('/signin');
+        $response->assertViewHas('error');
     }
 
 
@@ -151,7 +157,7 @@ class BackEndTest extends TestCase
 
     public function testListAllTodoItems(){
         $user = User::factory()->has(UserTodo::factory())->create();
-        $response = $this->actingAs($user)->postJson('/todo/list');
+        $response = $this->actingAs($user)->getJson('/todo');
         $response->assertSeeTextInOrder(['2020-10-12 00:00:00','other']);
     }
 
@@ -159,8 +165,8 @@ class BackEndTest extends TestCase
     public function testListTodoItemsByCategory(){
         $user = User::factory()->has(UserTodo::factory())->create();
         $response = $this->actingAs($user)->json(
-            'POST',
-            '/todo/list',
+            'GET',
+            '/todo',
             ['category' => 'other']
         );
         $response->assertSeeTextInOrder(['2020-10-12 00:00:00','other']);

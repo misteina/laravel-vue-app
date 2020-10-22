@@ -19332,13 +19332,12 @@ module.exports = function(module) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-var initial = document.getElementById("oldEmail").value;
 var SignIn = {
   data: function data() {
     return {
-      email: initial,
+      email: '',
       password: '',
-      showError: 'display: none'
+      showError: false
     };
   },
   methods: {
@@ -19348,11 +19347,14 @@ var SignIn = {
       }
 
       if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email) && this.password.length > 4) {
-        document.getElementById("signin").submit();
+        this.$refs.signin.submit();
       } else {
-        this.showError = 'display: block';
+        this.showError = true;
       }
     }
+  },
+  mounted: function mounted() {
+    this.email = this.$refs.oldEmail.value;
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = (SignIn);
@@ -19363,10 +19365,59 @@ var SignIn = {
 /*!********************************!*\
   !*** ./resources/js/SignUp.js ***!
   \********************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var SignUp = {
+  data: function data() {
+    return {
+      name: '',
+      email: '',
+      password: '',
+      verifyPassword: '',
+      showError: false,
+      errors: []
+    };
+  },
+  methods: {
+    submitData: function submitData(event) {
+      if (event) {
+        event.preventDefault();
+      }
 
+      this.errors = [];
+
+      if (!/^[a-zA-Z ]+$/.test(this.name)) {
+        this.errors.push('Invalid name');
+      }
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email)) {
+        this.errors.push('Invalid email');
+      }
+
+      if (this.password.length < 4) {
+        this.errors.push('Invalid password');
+      }
+
+      if (this.password !== this.verifyPassword) {
+        this.errors.push('Password mismatch');
+      }
+
+      if (this.errors.length === 0) {
+        this.$refs.signup.submit();
+      } else {
+        this.showError = true;
+      }
+    }
+  },
+  mounted: function mounted() {
+    this.email = this.$refs.oldEmail.value;
+    this.name = this.$refs.oldName.value;
+  }
+};
+/* harmony default export */ __webpack_exports__["default"] = (SignUp);
 
 /***/ }),
 
@@ -19381,7 +19432,6 @@ var SignIn = {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _SignIn__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SignIn */ "./resources/js/SignIn.js");
 /* harmony import */ var _SignUp__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SignUp */ "./resources/js/SignUp.js");
-/* harmony import */ var _SignUp__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_SignUp__WEBPACK_IMPORTED_MODULE_1__);
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
  //import ToDo from './ToDo';
@@ -19390,7 +19440,7 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 var Routes = {
   '/signin': _SignIn__WEBPACK_IMPORTED_MODULE_0__["default"],
-  '/signup': _SignUp__WEBPACK_IMPORTED_MODULE_1___default.a //'/todo' : Todo
+  '/signup': _SignUp__WEBPACK_IMPORTED_MODULE_1__["default"] //'/todo' : Todo
 
 };
 var Page = Routes[window.location.pathname] || NotFound;
