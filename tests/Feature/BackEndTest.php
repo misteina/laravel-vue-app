@@ -73,7 +73,7 @@ class BackEndTest extends TestCase
             '/signin',
             ['email' => 'good@you.com', 'password'=>'uy86ut']
         );
-        $response->assertJson(['error' => 'Incorrect email or password']);
+        $response->assertRedirect('/signin');
     }
 
 
@@ -97,7 +97,7 @@ class BackEndTest extends TestCase
             '/signin',
             ['email' => 'hello@you.com', 'password'=>'0e8ryd']
         );
-        $response->assertJson(['error' => 'Incorrect email or password']);
+        $response->assertRedirect('/signin');
     }
 
 
@@ -112,7 +112,7 @@ class BackEndTest extends TestCase
             '/signin',
             ['email' => 'hello@you.com', 'password'=>'uy86ut']
         );
-        $response->assertJson(['success'=>'done']);
+        $response->assertRedirect('/todo');
     }
 
 

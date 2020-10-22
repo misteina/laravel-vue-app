@@ -2,13 +2,16 @@ require('./bootstrap');
 
 import SignIn from './SignIn';
 //import ToDo from './ToDo';
-//import SignUp from './SignUp';
+//import NotFound from './NotFound';
+import SignUp from './SignUp';
 
 const Routes = {
     '/signin': SignIn,
-    //'/signup': SignUp,
+    '/signup': SignUp,
     //'/todo' : Todo
 };
 
+const Page = Routes[window.location.pathname] || NotFound;
 
-Vue.createApp(Routes[window.location.pathname]).mount('#app');
+
+Vue.createApp(Page).mount('#app');

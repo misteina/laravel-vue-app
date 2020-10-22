@@ -19332,12 +19332,13 @@ module.exports = function(module) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+var initial = document.getElementById("oldEmail").value;
 var SignIn = {
   data: function data() {
     return {
-      email: '',
+      email: initial,
       password: '',
-      showError: 'none'
+      showError: 'display: none'
     };
   },
   methods: {
@@ -19346,13 +19347,26 @@ var SignIn = {
         event.preventDefault();
       }
 
-      if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || password.length > 4) {} else {
-        this.showError = 'block';
+      if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email) && this.password.length > 4) {
+        document.getElementById("signin").submit();
+      } else {
+        this.showError = 'display: block';
       }
     }
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = (SignIn);
+
+/***/ }),
+
+/***/ "./resources/js/SignUp.js":
+/*!********************************!*\
+  !*** ./resources/js/SignUp.js ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+
 
 /***/ }),
 
@@ -19366,17 +19380,21 @@ var SignIn = {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _SignIn__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SignIn */ "./resources/js/SignIn.js");
+/* harmony import */ var _SignUp__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SignUp */ "./resources/js/SignUp.js");
+/* harmony import */ var _SignUp__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_SignUp__WEBPACK_IMPORTED_MODULE_1__);
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
  //import ToDo from './ToDo';
-//import SignUp from './SignUp';
+//import NotFound from './NotFound';
+
 
 var Routes = {
-  '/signin': _SignIn__WEBPACK_IMPORTED_MODULE_0__["default"] //'/signup': SignUp,
-  //'/todo' : Todo
+  '/signin': _SignIn__WEBPACK_IMPORTED_MODULE_0__["default"],
+  '/signup': _SignUp__WEBPACK_IMPORTED_MODULE_1___default.a //'/todo' : Todo
 
 };
-Vue.createApp(Routes[window.location.pathname]).mount('#app');
+var Page = Routes[window.location.pathname] || NotFound;
+Vue.createApp(Page).mount('#app');
 
 /***/ }),
 

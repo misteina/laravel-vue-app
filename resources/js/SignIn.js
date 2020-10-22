@@ -1,9 +1,11 @@
+const initial = document.getElementById("oldEmail").value;
+
 const SignIn = {
     data() {
         return {
-            email: '',
+            email: initial,
             password: '',
-            showError: 'none'
+            showError: 'display: none'
         }
     },
     methods: {
@@ -11,10 +13,10 @@ const SignIn = {
             if (event) {
                 event.preventDefault();
             }
-            if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || password.length > 4){
-
+            if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email) && this.password.length > 4){
+                document.getElementById("signin").submit();
             } else {
-                this.showError = 'block';
+                this.showError = 'display: block';
             }
         }
     }

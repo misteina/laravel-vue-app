@@ -20,21 +20,23 @@ class SignIn extends Controller
 
             if ($request->has(['email', 'password'])){
 
+                $request->flashExcept('password');
+
                 $validatedData = $request->validate([
                     'email' => 'required|email:filter',
                     'password' => 'required|min:5|max:20'
                 ]);
 
                 if (Auth::attempt($validatedData)) {
-                    return response()->json(['success' => 'done']);
+                    return redirect('/todo');
                 } else {
-                    return response()->json(['error' => 'Incorrect email or password']);
+                    return view('signin', ['error' => ['Incorrect email or password']]);
                 }
             } else {
-                return response()->json(['error' => 'Fill your email and password']);
+                return redirect('/signin');
             }
         } else {
-            return response()->json(['show' => 'todo']);
+            return redirect('/todo');
         }
     }
 }
