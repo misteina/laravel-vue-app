@@ -38,21 +38,21 @@ class AddToDo extends Controller {
                 return response()->json(['error' => 'No category']);
             }
 
+            $todo = [
+                        date('Y-m-d H:i:s') =>
+                        [
+                            'title' => $todoTitle,
+                            'body' => $todoBody,
+                            'category'=> ucfirst(strtolower($todoCategory))
+                        ]
+                    ];
+
             DB::table('user_todos')->updateOrInsert(
                 ['id' => Auth::id()],
                 [
                     'todo' => DB::raw(
                         'JSON_MERGE_PRESERVE(IFNULL(todo, \'[]\'), \''.
-                            json_encode(
-                                [
-                                    date('Y-m-d H:i:s') =>
-                                    [
-                                        'title' => $todoTitle,
-                                        'body' => $todoBody,
-                                        'category'=> $todoCategory
-                                    ]
-                                ]
-                            ).
+                            json_encode($todo).
                         '\')'
                     )
                 ]
@@ -66,10 +66,10 @@ class AddToDo extends Controller {
                 return response()->json(['todos' => $todos]);
             }
 
-            return response()->json(['success' => 'done']);
+            return response()->json([$todo]);
 
         } else {
-            return response()->json(['show' => 'todo']);
+            return response()->json(['error' => 'unauthorized']);
         }
     }
 }

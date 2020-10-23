@@ -19421,6 +19421,109 @@ var SignUp = {
 
 /***/ }),
 
+/***/ "./resources/js/ToDo.js":
+/*!******************************!*\
+  !*** ./resources/js/ToDo.js ***!
+  \******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var ToDo = {
+  data: function data() {
+    return {
+      dateFrom: '',
+      dateTo: '',
+      filterCategory: [],
+      category: 'all',
+      title: '',
+      body: '',
+      todos: []
+    };
+  },
+  methods: {
+    getTodos: function getTodos() {
+      var _this = this;
+
+      fetch('/todo', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: dateFrom,
+          to: dateTo,
+          category: filterCategory,
+          ajax: true
+        })
+      }).then(function (response) {
+        return response.json();
+      }).then(function (data) {
+        if (data.length > 0) {
+          _this.todos = data[0];
+          _this.filterCategory = data[1];
+        } else {
+          _this.todos = [];
+          _this.filterCategory = [];
+        }
+      });
+    },
+    addTodo: function addTodo() {
+      var _this2 = this;
+
+      fetch('/todo/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': document.getElementsByName("csrf-token")[0].getAttribute("content")
+        },
+        body: JSON.stringify({
+          category: category,
+          title: title,
+          body: body
+        })
+      }).then(function (response) {
+        return response.json();
+      }).then(function (data) {
+        return array_unshift(_this2.todos, data);
+      });
+    },
+    deleteTodo: function deleteTodo(time) {
+      var _this3 = this;
+
+      fetch('/todo/delete', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': document.getElementsByName("csrf-token")[0].getAttribute("content")
+        },
+        body: JSON.stringify({
+          id: time
+        })
+      }).then(function (response) {
+        return response.json();
+      }).then(function (data) {
+        if (data.length > 0) {
+          array_unshift(_this3.todos, data);
+        } else {
+          _this3.todos = [];
+          _this3.filterCategory = [];
+        }
+      });
+    }
+  },
+  mounted: function mounted() {
+    this.dateFrom = this.$refs.dateFrom.value;
+    this.dateTo = this.$refs.dateTo.value;
+    this.todos = JSON.parse(this.$refs.todoData.value)[0];
+    this.filterCategory = JSON.parse(this.$refs.todoData.value)[1];
+  }
+};
+/* harmony default export */ __webpack_exports__["default"] = (ToDo);
+
+/***/ }),
+
 /***/ "./resources/js/app.js":
 /*!*****************************!*\
   !*** ./resources/js/app.js ***!
@@ -19431,17 +19534,18 @@ var SignUp = {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _SignIn__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SignIn */ "./resources/js/SignIn.js");
-/* harmony import */ var _SignUp__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SignUp */ "./resources/js/SignUp.js");
+/* harmony import */ var _ToDo__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ToDo */ "./resources/js/ToDo.js");
+/* harmony import */ var _SignUp__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./SignUp */ "./resources/js/SignUp.js");
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
- //import ToDo from './ToDo';
-//import NotFound from './NotFound';
+
+ //import NotFound from './NotFound';
 
 
 var Routes = {
   '/signin': _SignIn__WEBPACK_IMPORTED_MODULE_0__["default"],
-  '/signup': _SignUp__WEBPACK_IMPORTED_MODULE_1__["default"] //'/todo' : Todo
-
+  '/signup': _SignUp__WEBPACK_IMPORTED_MODULE_2__["default"],
+  '/todo': _ToDo__WEBPACK_IMPORTED_MODULE_1__["default"]
 };
 var Page = Routes[window.location.pathname] || NotFound;
 Vue.createApp(Page).mount('#app');

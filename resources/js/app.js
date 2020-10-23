@@ -1,14 +1,14 @@
 require('./bootstrap');
 
 import SignIn from './SignIn';
-//import ToDo from './ToDo';
+import ToDo from './ToDo';
 //import NotFound from './NotFound';
 import SignUp from './SignUp';
 
 const Routes = {
     '/signin': SignIn,
     '/signup': SignUp,
-    //'/todo' : Todo
+    '/todo' : ToDo
 };
 
 const Page = Routes[window.location.pathname] || NotFound;
