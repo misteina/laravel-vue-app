@@ -24,7 +24,7 @@
                 </ul>
             </div>
         @endif
-        @if (isset($registered))
+        @if (session('registered'))
             <div class="alert alert-success" role="alert">
                 Your registration was successful. Please sign in.
             </div>

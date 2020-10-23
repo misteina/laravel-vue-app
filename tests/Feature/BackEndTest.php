@@ -55,7 +55,10 @@ class BackEndTest extends TestCase
             '/signup',
             ['name' => 'Peter', 'email' => 'hello@you.com', 'password'=>'uy86ut']
         );
-        $response->assertViewHas('registered');
+        $this->assertDatabaseHas(
+            'users',
+            ['name' => 'Peter']
+        );
     }
 
 
@@ -157,8 +160,12 @@ class BackEndTest extends TestCase
 
     public function testListAllTodoItems(){
         $user = User::factory()->has(UserTodo::factory())->create();
-        $response = $this->actingAs($user)->getJson('/todo');
-        $response->assertSeeTextInOrder(['2020-10-12 00:00:00','other']);
+        $response = $this->actingAs($user)->json(
+            'GET', 
+            '/todo',
+            ['ajax' => true]
+        );
+        $response->assertSeeTextInOrder(['My title','My title 2']);
     }
 
 
@@ -167,9 +174,9 @@ class BackEndTest extends TestCase
         $response = $this->actingAs($user)->json(
             'GET',
             '/todo',
-            ['category' => 'other']
+            ['category' => 'other', 'ajax' => true]
         );
-        $response->assertSeeTextInOrder(['2020-10-12 00:00:00','other']);
+        $response->assertSeeText('other');
     }
 
 
@@ -178,9 +185,9 @@ class BackEndTest extends TestCase
         $response = $this->actingAs($user)->json(
             'POST',
             '/todo/delete',
-            ['id' => '2020-10-15 22:00:00']
+            ['id' => date('Y-m-d').' 00:00:00']
         );
-        $response->assertDontSeeText('2020-10-15 22:00:00');
+        $response->assertDontSeeText(date('Y-m-d').' 00:00:00');
     }
 
 

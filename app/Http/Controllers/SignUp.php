@@ -38,9 +38,9 @@ class SignUp extends Controller
                 $id = DB::table('users')->insertGetId($validatedData);
 
                 if (is_int($id)){
-                    return view('/signin', ['registered' => true]);
+                    return redirect('/signin')->with('registered', true);
                 } else {
-                    return view('/signup', ['error' => ['An error was encountered '.$id]]);
+                    return view('/signup', ['error' => ['An error was encountered']]);
                 }
             } else {
                 return redirect('/signup');

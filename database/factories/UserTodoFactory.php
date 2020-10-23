@@ -26,13 +26,13 @@ class UserTodoFactory extends Factory
             'id' => Auth::id(),
             'todo' => json_encode(
                 [
-                    '2020-10-12 00:00:00' =>
+                    date('Y-m-d').' 00:00:00' =>
                     [
                         'title' => 'My title',
                         'body' => 'Todo details',
                         'category' => 'other'
                     ],
-                    '2020-10-15 22:00:00' =>
+                    date('Y-m-d').' 23:59:59' =>
                     [
                         'title' => 'My title 2',
                         'body' => 'Todo details 2',

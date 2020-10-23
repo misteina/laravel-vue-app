@@ -21,9 +21,17 @@ class ListToDos extends Controller
 
         if (Auth::check()){
 
-            $todosFrom = $request->input('from', '2020-10-10 00:00:00');
-            $todosTo = $request->input('to', date("Y-m-d 23:59:59"));
-            $todosCategory = $request->input('category', 'all');
+            if ($request->has(['from', 'to', 'category'])){
+
+                $todosFrom = $request->input('from').' 00:00:00';
+                $todosFrom = $request->input('to').' 23:59:59';
+                $todosFrom = $request->input('category');
+
+            } else {
+                $todosFrom = date('Y-m-d 00:00:00');
+                $todosTo = date("Y-m-d 23:59:59");
+                $todosCategory = 'all';
+            }
 
             if (!$this->validateDate($todosFrom) || !$this->validateDate($todosTo)){
                 $todosFrom = '2020-10-10 00:00:00';
@@ -75,13 +83,13 @@ class ListToDos extends Controller
                 $data = [$todoList, $categories];
 
             } else {
-                $data = [0];
+                $data = [];
             }
 
             if ($request->has('ajax')){
                 return response()->json($data);
             } else {
-                return view('/todo', ['todoData' => json_encode($data)]);
+                return view('/todo', ['todoData' => $data]);
             }
         } else {
             return redirect('/signin');
