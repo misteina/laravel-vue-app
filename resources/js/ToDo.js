@@ -1,6 +1,3 @@
-import "isomorphic-fetch";
-
-
 const ToDo = {
     data() {
         return {
@@ -13,7 +10,9 @@ const ToDo = {
             addBody: '',
             todos: [],
             errors: [],
-            showErrors: false
+            showErrors: false,
+            confirmDelete: false,
+            deleteItemId: ''
         }
     },
     methods: { 
@@ -22,12 +21,11 @@ const ToDo = {
                 { "from": this.dateFrom, "to": this.dateTo, "category": this.category }
             );
             let x = this;
-            let y = this;
             let xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
                     x.todos = JSON.parse(this.responseText)[0];
-                    y.showCategories = JSON.parse(this.responseText)[1];
+                    x.showCategories = JSON.parse(this.responseText)[1];
                 }
             };
             xhttp.open("GET", url, true);
@@ -73,26 +71,30 @@ const ToDo = {
                 this.showErrors = true;
             }
         },
-        deleteTodo(time) {
-            fetch('/todo/delete', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.getElementsByName("csrf-token")[0].getAttribute("content")
-                },
-                body: JSON.stringify({ "id": time })
-            }).then(
-                response => response.json()
-            ).then(
-                data => {
-                    if (data.length > 0) {
-                        array_unshift(this.todos, data);
-                    } else {
-                        this.todos = [];
-                        this.showCategories = [];
-                    }
+        confirmDeleteItem(itemId){
+            this.confirmDelete = true;
+            this.deleteItemId = itemId;
+        },
+        deleteTodo() {
+            this.confirmDelete = false;
+            console.log(this.deleteItemId);
+
+            for (const [key, value] of Object.entries(this.todos)) {
+                if (key == this.deleteItemId){
+                    delete this.todos[key];
+                    break;
                 }
-            );
+            }
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log(this.responseText);
+                }
+            };
+            xhttp.open("POST", "/todo/delete", true);
+            xhttp.setRequestHeader("X-CSRF-TOKEN", document.getElementsByName("csrf-token")[0].getAttribute("content"));
+            xhttp.setRequestHeader("Content-Type", "application/json");
+            xhttp.send(JSON.stringify({ "id": this.deleteItemId }));
         }
     },
     mounted() {

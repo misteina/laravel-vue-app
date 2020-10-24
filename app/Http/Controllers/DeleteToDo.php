@@ -30,11 +30,7 @@ class DeleteToDo extends Controller
                 ->where('id', Auth::id())
                 ->update(['todo' => DB::raw('JSON_MERGE_PATCH(todo, \'{"'.$todoId.'": null}\')')]);
 
-            $todos = DB::table('user_todos')->select('todo')
-                    ->where('id', Auth::id())
-                    ->get();
-
-            return response()->json($todos);
+            return response()->json(['success' => 'done']);
             
         } else {
             return response()->json(['error' => 'unauthorized']);
