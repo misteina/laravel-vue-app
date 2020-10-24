@@ -39,34 +39,26 @@ class AddToDo extends Controller {
             }
 
             $todo = [
-                        date('Y-m-d H:i:s') =>
-                        [
-                            'title' => $todoTitle,
-                            'body' => $todoBody,
-                            'category'=> ucfirst(strtolower($todoCategory))
-                        ]
-                    ];
+                date('Y-m-d H:i:s') =>
+                [
+                    'title' => $todoTitle,
+                    'body' => $todoBody,
+                    'category'=> ucfirst(strtolower($todoCategory))
+                ]
+            ];
 
             DB::table('user_todos')->updateOrInsert(
                 ['id' => Auth::id()],
                 [
                     'todo' => DB::raw(
-                        'JSON_MERGE_PRESERVE(IFNULL(todo, \'[]\'), \''.
+                        'JSON_MERGE_PRESERVE(IFNULL(todo, \'{}\'), \''.
                             json_encode($todo).
                         '\')'
                     )
                 ]
             );
 
-            if (App::environment('testing')) {
-                $todos = DB::table('user_todos')->select('todo')
-                    ->where('id', Auth::id())
-                    ->get();
-
-                return response()->json(['todos' => $todos]);
-            }
-
-            return response()->json([$todo]);
+            return response()->json(['success' => 'done']);
 
         } else {
             return response()->json(['error' => 'unauthorized']);

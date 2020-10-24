@@ -7,18 +7,18 @@
         <div class="set-options">
             <div class="date">
                 <label for="dateFrom">Date From:</label>
-                <input type="date" ref="dateFrom" v-model="dateFrom" class="form-control input-width" id="dateFrom" value="{{ date('Y-m-d') }}">
+                <input type="date" ref="dateFrom" v-model="dateFrom" class="form-control input-width" id="dateFrom" data-from="{{ date('Y-m-d') }}">
             </div>
             <div class="date">
                 <label for="dateTo">Date To:</label>
-                <input type="date" ref="dateTo" v-model="dateTo" class="form-control input-width" id="dateTo" value="{{ date('Y-m-d') }}">
+                <input type="date" ref="dateTo" v-model="dateTo" class="form-control input-width" id="dateTo" data-to="{{ date('Y-m-d') }}">
             </div>
             <div class="category">
                 <label for="selectCategory">Category:</label>
                 <select class="custom-select" id="selectCategory" v-model="category">
                     <option selected value="all">Choose...</option>
-                    <option v-for="cat in filterCategory" value="@{{ cat.category }}">@{{ cat.category }}</option>
-                    <option v-if="Object.keys(filterCategory).length === 0" selected>None</option>
+                    <option v-for="cat in showCategories">@{{ cat }}</option>
+                    <option v-if="Object.keys(showCategories).length === 0" selected>None</option>
                 </select>
             </div>
           <button type="button" v-on:click="getTodos" class="btn btn-secondary btn-lg btn-block" id="list-button">List Todos</button>  
@@ -26,7 +26,7 @@
         <div class="list">
             <div class="todo-item" v-for="(todo, time) in todos">
                 <div class="todo-header">
-                    <button type="button" v-on:click="deleteTodo(time)" class="delete-todo" aria-label="Close">
+                    <button type="button" v-on:click="deleteTodo('@{{ time }}')" class="delete-todo" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                     <div class="todo-title">@{{ todo.title }}</div><div class="todo-time">@{{ time }}</div>
@@ -49,17 +49,23 @@
                 </div>
                 <div class="modal-body">
                     <form>
+                        <div v-if="showErrors" class="alert alert-danger" role="alert">
+                            <ul>
+                                <li v-for="error in errors">@{{ error }}</li>
+                            </ul>
+                        </div>
+                        @csrf
                         <div class="form-group">
                             <label for="category">Category</label>
-                            <input type="text" v-model="category" class="form-control" id="category">
+                            <input type="text" v-model="addCategory" class="form-control" id="category">
                         </div>
                         <div class="form-group">
                             <label for="title">Title</label>
-                            <input type="text" v-model="title" class="form-control" id="title">
+                            <input type="text" v-model="addTitle" class="form-control" id="title">
                         </div>
                         <div class="form-group">
                             <label for="body">Body</label>
-                            <textarea id="body" v-model="body" class="form-control"></textarea>
+                            <textarea id="body" v-model="addBody" class="form-control"></textarea>
                         </div>
                     </form>
                 </div>

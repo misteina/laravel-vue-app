@@ -24,8 +24,8 @@ class ListToDos extends Controller
             if ($request->has(['from', 'to', 'category'])){
 
                 $todosFrom = $request->input('from').' 00:00:00';
-                $todosFrom = $request->input('to').' 23:59:59';
-                $todosFrom = $request->input('category');
+                $todosTo = $request->input('to').' 23:59:59';
+                $todosCategory = $request->input('category');
 
             } else {
                 $todosFrom = date('Y-m-d 00:00:00');
@@ -33,7 +33,7 @@ class ListToDos extends Controller
                 $todosCategory = 'all';
             }
 
-            if (!$this->validateDate($todosFrom) || !$this->validateDate($todosTo)){
+            if (!$this->validateDate($todosFrom) || !$this->validateDate($todosTo) || date_create($todosFrom) > date_create($todosTo) ){
                 $todosFrom = '2020-10-10 00:00:00';
                 $todosTo = date("Y-m-d 23:59:59");
             }
@@ -42,12 +42,12 @@ class ListToDos extends Controller
                 $todosCategory = 'all';
             }
 
-            $todos = DB::table('user_todos')->select('todo')
+            $getTodos = DB::table('user_todos')->select('todo')
                 ->where('id', Auth::id())
                 ->get();
 
-            if (count($todos) > 0){
-                $todos = json_decode($todos[0]->todo, true);
+            if (count($getTodos) > 0){
+                $todos = json_decode($getTodos[0]->todo, true);
 
                 $todoList = [];
                 $categories = [];
@@ -58,7 +58,7 @@ class ListToDos extends Controller
                         $dateTo = date_create($todosTo);
                         $addedTime = date_create($time);
                         if ($todosCategory === $todo['category'] && $addedTime >= $dateFrom && $addedTime <= $dateTo){
-                            array_push($todoList, [$time => $todo]);
+                            $todoList[$time] = $todo;
                         }
                         if (!in_array($todo['category'], $categories)){
                             array_push($categories, $todo['category']);
@@ -70,7 +70,7 @@ class ListToDos extends Controller
                         $dateTo = date_create($todosTo);
                         $addedTime = date_create($time);
                         if ($addedTime >= $dateFrom && $addedTime <= $dateTo){
-                            array_push($todoList, [$time => $todo]);
+                            $todoList[$time] = $todo;
                         }
                         if (!in_array($todo['category'], $categories)){
                             array_push($categories, $todo['category']);
@@ -78,7 +78,7 @@ class ListToDos extends Controller
                     }
                 }
 
-                ksort($todoList);
+                krsort($todoList);
 
                 $data = [$todoList, $categories];
 
@@ -86,7 +86,7 @@ class ListToDos extends Controller
                 $data = [];
             }
 
-            if ($request->has('ajax')){
+            if ($request->hasHeader('Request-Medium')){
                 return response()->json($data);
             } else {
                 return view('/todo', ['todoData' => $data]);

@@ -132,7 +132,7 @@ class BackEndTest extends TestCase
             '/todo/add',
             ['title' => 'My Todo title', 'body' => 'My Todo body', 'category' => 'other']
         );
-        $response->assertSeeText('My Todo title');
+        $response->assertJson(['success' => 'done']);
     }
 
 
