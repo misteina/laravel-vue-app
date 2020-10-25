@@ -64,15 +64,15 @@
                                 <div  class="time-box left-side">
                                     <label for="hour">Hour</label>
                                     <select class="custom-select" id="hour" v-model="addHour">
-                                        <option selected disabled value="">HH</option>
-                                        <option v-for="hour in 24" value="">@{{ getHour(hour) }}</option>
+                                        <option selected disabled value="00">HH</option>
+                                        <option v-for="hour in 24">@{{ getHour(hour) }}</option>
                                     </select>
                                 </div>
                                 <div class="time-box right-side">
                                     <label for="minute">Min</label>
                                     <select class="custom-select" id="minute" v-model="addMinute">
-                                        <option selected disabled value="">MM</option>
-                                        <option v-for="minute in 60" value="">@{{ getMinute(minute) }}</option>
+                                        <option selected disabled value="00">MM</option>
+                                        <option v-for="minute in 60">@{{ getMinute(minute) }}</option>
                                     </select>
                                 </div>
                             </div>

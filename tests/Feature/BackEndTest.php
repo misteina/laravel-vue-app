@@ -130,7 +130,7 @@ class BackEndTest extends TestCase
         $response = $this->actingAs($user)->json(
             'POST', 
             '/todo/add',
-            ['title' => 'My Todo title', 'body' => 'My Todo body', 'category' => 'other']
+            ['title' => 'My Todo title', 'body' => 'My Todo body', 'category' => 'other', 'time' => date('Y-m-d H:i')]
         );
         $response->assertJson(['success' => 'done']);
     }
@@ -143,7 +143,7 @@ class BackEndTest extends TestCase
             '/todo/add',
             ['title' => '', 'body' => '', 'category' => 'other']
         );
-        $response->assertJson(['error' => 'No title']);
+        $response->assertSeeText('No title');
     }
 
 
@@ -154,18 +154,25 @@ class BackEndTest extends TestCase
             '/todo/add',
             ['title' => 'My Todo title', 'body' => '', 'category' => '']
         );
-        $response->assertJson(['error' => 'No category']);
+        $response->assertSeeText('No category');
+    }
+
+
+    public function testRejectAddTodoItemWithInvalidTime(){
+        $user = User::factory()->make();
+        $response = $this->actingAs($user)->json(
+            'POST', 
+            '/todo/add',
+            ['title' => 'My Todo title', 'body' => '', 'category' => 'category', 'time' => '2020']
+        );
+        $response->assertSeeText('Invalid schedule time');
     }
 
 
     public function testListAllTodoItems(){
         $user = User::factory()->has(UserTodo::factory())->create();
-        $response = $this->actingAs($user)->json(
-            'GET', 
-            '/todo',
-            ['ajax' => true]
-        );
-        $response->assertSeeTextInOrder(['My title','My title 2']);
+        $response = $this->actingAs($user)->json('GET', '/todo');
+        $response->assertViewHas('todoData');
     }
 
 
@@ -176,7 +183,7 @@ class BackEndTest extends TestCase
             '/todo',
             ['category' => 'other', 'ajax' => true]
         );
-        $response->assertSeeText('other');
+        $response->assertViewHas('todoData');
     }
 
 

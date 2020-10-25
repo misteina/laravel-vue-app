@@ -19450,8 +19450,8 @@ var ToDo = {
       category: 'all',
       showCategories: [],
       addDay: '',
-      addHour: '',
-      addMinute: '',
+      addHour: '00',
+      addMinute: '00',
       addCategory: '',
       addTitle: '',
       addBody: '',
@@ -19474,8 +19474,8 @@ var ToDo = {
 
       xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
-          x.todos = JSON.parse(this.responseText)[0];
-          x.showCategories = JSON.parse(this.responseText)[1];
+          x.todos = JSON.parse(this.responseText)[0] || [];
+          x.showCategories = JSON.parse(this.responseText)[1] || [];
         }
       };
 
@@ -19484,8 +19484,6 @@ var ToDo = {
       xhttp.send();
     },
     addTodo: function addTodo() {
-      var _this = this;
-
       this.showErrors = false;
       this.errors = [];
 
@@ -19501,29 +19499,43 @@ var ToDo = {
         this.errors.push('Empty body field');
       }
 
+      if (this.addDay.length === 0) {
+        this.errors.push('No schedule date selected');
+      }
+
+      if (isNaN(new Date(this.addDay).getTime()) || new Date().getTime() > new Date(this.addDay).getTime()) {
+        this.errors.push('Invalid schedule date');
+      }
+
       if (this.errors.length === 0) {
-        fetch('/todo/add', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.getElementsByName("csrf-token")[0].getAttribute("content")
-          },
-          body: JSON.stringify({
-            "category": this.addCategory,
-            "title": this.addTitle,
-            "body": this.addBody
-          })
-        }).then(function (response) {
-          return response.json();
-        }).then(function (data) {
-          if (data.hasOwnProperty('success')) {
-            location.reload();
-          } else if (data.hasOwnProperty('error')) {
-            _this.errors.push(data.error);
-          } else {
-            _this.errors.push('An error was encountered');
+        var addTime = "".concat(this.addDay, " ").concat(this.addHour, ":").concat(this.addMinute, ":00");
+        var token = document.getElementsByName("csrf-token")[0].getAttribute("content");
+        var xhttp = new XMLHttpRequest();
+
+        xhttp.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+            console.log(this.responseText);
+
+            if (this.responseText.hasOwnProperty('success')) {
+              location.reload();
+            } else if (this.responseText.hasOwnProperty('error')) {
+              this.errors = this.responseText.error;
+            } else {
+              this.errors = ['An error was encountered'];
+            }
           }
-        });
+        };
+
+        xhttp.open("POST", '/todo/add', true);
+        xhttp.setRequestHeader("Content-Type", "application/json");
+        xhttp.setRequestHeader("X-CSRF-TOKEN", token);
+        xhttp.setRequestHeader("Request-Medium", "ajax");
+        xhttp.send(JSON.stringify({
+          "category": this.addCategory,
+          "title": this.addTitle,
+          "body": this.addBody,
+          "time": addTime
+        }));
       } else {
         this.showErrors = true;
       }
@@ -19567,8 +19579,8 @@ var ToDo = {
   mounted: function mounted() {
     this.dateFrom = this.$refs.dateFrom.dataset.from;
     this.dateTo = this.$refs.dateTo.dataset.to;
-    this.todos = JSON.parse(this.$refs.todoData.value)[0];
-    this.showCategories = JSON.parse(this.$refs.todoData.value)[1];
+    this.todos = JSON.parse(this.$refs.todoData.value)[0] || [];
+    this.showCategories = JSON.parse(this.$refs.todoData.value)[1] || [];
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = (ToDo);

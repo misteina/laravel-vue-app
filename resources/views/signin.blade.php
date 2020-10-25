@@ -40,7 +40,7 @@
                 <label for="passwordInput">Password</label>
                 <input type="password" name="password" class="form-control" v-model="password" id="passwordInput">
             </div>
-            <button v-on:click="submitData" type="submit" class="btn btn-primary">Submit</button>
+            <button v-on:click="submitData" type="submit" class="btn btn-primary">Sign In</button>
         </form>
     </div>
 @endsection

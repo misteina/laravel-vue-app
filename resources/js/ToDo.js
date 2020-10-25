@@ -6,8 +6,8 @@ const ToDo = {
             category: 'all',
             showCategories: [],
             addDay: '',
-            addHour: '',
-            addMinute: '',
+            addHour: '00',
+            addMinute: '00',
             addCategory: '',
             addTitle: '',
             addBody: '',
@@ -27,8 +27,8 @@ const ToDo = {
             let xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
-                    x.todos = JSON.parse(this.responseText)[0];
-                    x.showCategories = JSON.parse(this.responseText)[1];
+                    x.todos = JSON.parse(this.responseText)[0] || [];
+                    x.showCategories = JSON.parse(this.responseText)[1] || [];
                 }
             };
             xhttp.open("GET", url, true);
@@ -47,29 +47,36 @@ const ToDo = {
             if (this.addBody.length === 0){
                 this.errors.push('Empty body field');
             }
+            if (this.addDay.length === 0){
+                this.errors.push('No schedule date selected');
+            }
+            if (isNaN(new Date(this.addDay).getTime()) || new Date().getTime() > new Date(this.addDay).getTime()) {
+                this.errors.push('Invalid schedule date');
+            }
             if (this.errors.length === 0){
-                fetch('/todo/add', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.getElementsByName("csrf-token")[0].getAttribute("content")
-                    },
-                    body: JSON.stringify(
-                        { "category": this.addCategory, "title": this.addTitle, "body": this.addBody }
-                    )
-                }).then(
-                    response => response.json()
-                ).then(
-                    data => {
-                        if (data.hasOwnProperty('success')){
+
+                let addTime = `${this.addDay} ${this.addHour}:${this.addMinute}:00`;
+                let token = document.getElementsByName("csrf-token")[0].getAttribute("content");
+                let xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        console.log(this.responseText);
+                        if (this.responseText.hasOwnProperty('success')) {
                             location.reload();
-                        } else if (data.hasOwnProperty('error')){
-                            this.errors.push(data.error);
+                        } else if (this.responseText.hasOwnProperty('error')) {
+                            this.errors = this.responseText.error;
                         } else {
-                            this.errors.push('An error was encountered');
+                            this.errors = ['An error was encountered'];
                         }
                     }
-                );
+                };
+                xhttp.open("POST", '/todo/add', true);
+                xhttp.setRequestHeader("Content-Type", "application/json");
+                xhttp.setRequestHeader("X-CSRF-TOKEN", token);
+                xhttp.setRequestHeader("Request-Medium", "ajax");
+                xhttp.send(JSON.stringify(
+                    { "category": this.addCategory, "title": this.addTitle, "body": this.addBody, "time": addTime }
+                ));
             } else {
                 this.showErrors = true;
             }
@@ -106,8 +113,8 @@ const ToDo = {
     mounted() {
         this.dateFrom = this.$refs.dateFrom.dataset.from;
         this.dateTo = this.$refs.dateTo.dataset.to;
-        this.todos = JSON.parse(this.$refs.todoData.value)[0];
-        this.showCategories = JSON.parse(this.$refs.todoData.value)[1];
+        this.todos = JSON.parse(this.$refs.todoData.value)[0] || [];
+        this.showCategories = JSON.parse(this.$refs.todoData.value)[1] || [];
     }
 }
 

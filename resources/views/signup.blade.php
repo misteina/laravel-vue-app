@@ -47,7 +47,7 @@
                 <label for="verifyPasswordInput">Password</label>
                 <input type="password" v-model="verifyPassword" name="verifyPassword" class="form-control" id="verifyPasswordInput">
             </div>
-            <button v-on:click="submitData" type="submit" class="btn btn-primary">Submit</button>
+            <button v-on:click="submitData" type="submit" class="btn btn-primary">Sign Up</button>
         </form>
     </div>
 @endsection

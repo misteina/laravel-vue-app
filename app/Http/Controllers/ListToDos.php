@@ -52,6 +52,8 @@ class ListToDos extends Controller
                 $todoList = [];
                 $categories = [];
 
+                $firstCount = count($todos);
+
                 if ($todosCategory !== 'all'){
                     foreach ($todos as $time => $todo){
                         $dateFrom = date_create($todosFrom);
@@ -62,6 +64,9 @@ class ListToDos extends Controller
                         }
                         if (!in_array($todo['category'], $categories)){
                             array_push($categories, $todo['category']);
+                        }
+                        if ($addedTime > date_create(date('Y-m-d'))){
+                            unset($time);
                         }
                     }
                 } else {
@@ -75,7 +80,18 @@ class ListToDos extends Controller
                         if (!in_array($todo['category'], $categories)){
                             array_push($categories, $todo['category']);
                         }
+                        if ($addedTime > date_create(date('Y-m-d'))){
+                            unset($time);
+                        }
                     }
+                }
+
+                $secondCount = count($todos);
+
+                if ($firstCount > $secondCount){
+                    DB::table('user_todos')
+                        ->where('id', Auth::id())
+                        ->update(['todo' => json_encode($todos)]);
                 }
 
                 krsort($todoList);

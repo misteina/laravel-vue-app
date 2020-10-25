@@ -24,9 +24,12 @@ class AddToDo extends Controller {
             $todoTitle = $request->input('title', null);
             $todoBody = $request->input('body', 'No body');
             $todoCategory = $request->input('category', 'other');
+            $scheduleTime = $request->input('time', null);
+
+            $errors = [];
 
             if ($todoTitle === null || empty(trim($todoTitle))){
-                return response()->json(['error' => 'No title']);
+                array_push($errors, 'No title');
             }
             if (strlen(trim($todoTitle)) > 50){
                 $todoTitle = substr($todoTitle, 50).'...';
@@ -35,33 +38,44 @@ class AddToDo extends Controller {
                 $todoBody = substr($todoBody, 500).'...';
             }
             if (!ctype_alpha($todoCategory)){
-                return response()->json(['error' => 'No category']);
+                array_push($errors, 'No category filled');
+            }
+            if (!$this->validateDate($scheduleTime) || date_create($scheduleTime) > date_create('now')){
+                array_push($errors, 'Invalid schedule time');
             }
 
-            $todo = [
-                date('Y-m-d H:i:s') =>
-                [
-                    'title' => $todoTitle,
-                    'body' => $todoBody,
-                    'category'=> ucfirst(strtolower($todoCategory))
-                ]
-            ];
+            if (count($errors) === 0){
+                $todo = [
+                    $scheduleTime =>
+                    [
+                        'title' => $todoTitle,
+                        'body' => $todoBody,
+                        'category'=> ucfirst(strtolower($todoCategory))
+                    ]
+                ];
 
-            DB::table('user_todos')->updateOrInsert(
-                ['id' => Auth::id()],
-                [
-                    'todo' => DB::raw(
-                        'JSON_MERGE_PRESERVE(IFNULL(todo, \'{}\'), \''.
-                            json_encode($todo).
-                        '\')'
-                    )
-                ]
-            );
+                DB::table('user_todos')->updateOrInsert(
+                    ['id' => Auth::id()],
+                    [
+                        'todo' => DB::raw(
+                            'JSON_MERGE_PATCH(IFNULL(todo, \'{}\'), \''.
+                                json_encode($todo).
+                            '\')'
+                        )
+                    ]
+                );
 
-            return response()->json(['success' => 'done']);
-
+                return response()->json(['success' => 'done']);
+            } else {
+                return response()->json(['error' => $errors]);
+            }
         } else {
             return response()->json(['error' => 'unauthorized']);
         }
+    }
+
+    private function validateDate($date, $format = 'Y-m-d H:i') {
+        $d = date_create_from_format($format, $date);
+        return $d && $d->format($format) === $date;
     }
 }
