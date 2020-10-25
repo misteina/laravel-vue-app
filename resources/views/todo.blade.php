@@ -26,7 +26,7 @@
         <div class="list">
             <div class="todo-item" v-for="(todo, time) in todos">
                 <div class="todo-header">
-                    <button type="button" v-on:click="confirmDeleteItem('@{{ time }}')" data-toggle="modal" data-target="#deleteItem" class="delete-todo" aria-label="Close">
+                    <button type="button" v-on:click=confirmDeleteItem(time) data-toggle="modal" data-target="#deleteItem" class="delete-todo" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                     <div class="todo-title">@{{ todo.title }}</div><div class="todo-time">@{{ time }}</div>
@@ -55,6 +55,28 @@
                             </ul>
                         </div>
                         @csrf
+                        <div class="schedule-time">
+                            <div class="pick-date">
+                                <label for="scheduleDate">Date</label>
+                                <input type="date" v-model="addDay" class="form-control" id="scheduleDate">
+                            </div>
+                            <div class="pick-date float-right">
+                                <div  class="time-box left-side">
+                                    <label for="hour">Hour</label>
+                                    <select class="custom-select" id="hour" v-model="addHour">
+                                        <option selected disabled value="">HH</option>
+                                        <option v-for="hour in 24" value="">@{{ getHour(hour) }}</option>
+                                    </select>
+                                </div>
+                                <div class="time-box right-side">
+                                    <label for="minute">Min</label>
+                                    <select class="custom-select" id="minute" v-model="addMinute">
+                                        <option selected disabled value="">MM</option>
+                                        <option v-for="minute in 60" value="">@{{ getMinute(minute) }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                         <div class="form-group">
                             <label for="category">Category</label>
                             <input type="text" v-model="addCategory" class="form-control" id="category">
@@ -65,7 +87,7 @@
                         </div>
                         <div class="form-group">
                             <label for="body">Body</label>
-                            <textarea id="body" v-model="addBody" class="form-control"></textarea>
+                            <textarea id="body" maxlength="500" v-model="addBody" class="form-control"></textarea>
                         </div>
                     </form>
                 </div>
@@ -90,7 +112,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-                    <button v-on:click="deleteTodo" type="button" class="btn btn-primary">Yes</button>
+                    <button v-on:click="deleteTodo" type="button" class="btn btn-primary" data-dismiss="modal">Yes</button>
                 </div>
             </div>
         </div>

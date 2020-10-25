@@ -5,6 +5,9 @@ const ToDo = {
             dateTo: '',
             category: 'all',
             showCategories: [],
+            addDay: '',
+            addHour: '',
+            addMinute: '',
             addCategory: '',
             addTitle: '',
             addBody: '',
@@ -86,15 +89,18 @@ const ToDo = {
                 }
             }
             let xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    console.log(this.responseText);
-                }
-            };
             xhttp.open("POST", "/todo/delete", true);
             xhttp.setRequestHeader("X-CSRF-TOKEN", document.getElementsByName("csrf-token")[0].getAttribute("content"));
             xhttp.setRequestHeader("Content-Type", "application/json");
             xhttp.send(JSON.stringify({ "id": this.deleteItemId }));
+        },
+        getHour(hour) {
+            hour = (parseInt(hour) - 1).toString();
+            return (hour.length === 1) ? `0${hour}` : hour;
+        },
+        getMinute(minute) {
+            minute = (parseInt(minute) - 1).toString();
+            return (minute.length === 1) ? `0${minute}` : minute;
         }
     },
     mounted() {

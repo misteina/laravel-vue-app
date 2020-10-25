@@ -118,3 +118,24 @@ label{
 .add-todo-button{
     width: 100px;
 }
+.schedule-time{
+    margin-bottom: 12px;
+}
+.pick-date{
+    display: inline-block;
+    width: 40%;
+}
+.time-box{
+    width: 48%;
+    float: right;
+}
+.float-right{
+    width: 40%;
+    float: right;
+}
+.left-side{
+    float: left;
+}
+.right-side{
+    float: right;
+}
