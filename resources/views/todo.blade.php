@@ -3,7 +3,7 @@
 @section('content')
     @parent
     <div class="todo-list">
-        <input type="hidden" ref="todoData" value="{{ json_encode($todoData) }}">
+        <input type="hidden" v-if="todoData" ref="todoData" value="{{ json_encode($todoData) }}">
         <div class="set-options">
             <div class="date">
                 <label for="dateFrom">Date From:</label>
@@ -16,7 +16,7 @@
             <div class="category">
                 <label for="selectCategory">Category:</label>
                 <select class="custom-select" id="selectCategory" v-model="category">
-                    <option selected value="all">Choose...</option>
+                    <option selected value="all">All</option>
                     <option v-for="cat in showCategories">@{{ cat }}</option>
                     <option v-if="Object.keys(showCategories).length === 0" selected>None</option>
                 </select>

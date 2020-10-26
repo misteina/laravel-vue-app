@@ -11,6 +11,7 @@ const ToDo = {
             addCategory: '',
             addTitle: '',
             addBody: '',
+            todoData: true,
             todos: [],
             errors: [],
             showErrors: false,
@@ -50,23 +51,29 @@ const ToDo = {
             if (this.addDay.length === 0){
                 this.errors.push('No schedule date selected');
             }
-            if (isNaN(new Date(this.addDay).getTime()) || new Date().getTime() > new Date(this.addDay).getTime()) {
-                this.errors.push('Invalid schedule date');
+            let addTime = `${this.addDay} ${this.addHour}:${this.addMinute}`;
+
+            if (isNaN(new Date(addTime).getTime()) || (new Date().getTime() > new Date(addTime).getTime())) {
+                this.errors.push('Invalid schedule date or behind time');
             }
             if (this.errors.length === 0){
 
-                let addTime = `${this.addDay} ${this.addHour}:${this.addMinute}:00`;
                 let token = document.getElementsByName("csrf-token")[0].getAttribute("content");
                 let xhttp = new XMLHttpRequest();
+                
                 xhttp.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
-                        console.log(this.responseText);
-                        if (this.responseText.hasOwnProperty('success')) {
+
+                        let data = JSON.parse(this.responseText);
+
+                        if (data.hasOwnProperty('success')) {
                             location.reload();
-                        } else if (this.responseText.hasOwnProperty('error')) {
-                            this.errors = this.responseText.error;
+                        } else if (data.hasOwnProperty('error')) {
+                            this.errors = data.error;
+                            this.showErrors = true;
                         } else {
                             this.errors = ['An error was encountered'];
+                            this.showErrors = true;
                         }
                     }
                 };
@@ -115,6 +122,7 @@ const ToDo = {
         this.dateTo = this.$refs.dateTo.dataset.to;
         this.todos = JSON.parse(this.$refs.todoData.value)[0] || [];
         this.showCategories = JSON.parse(this.$refs.todoData.value)[1] || [];
+        this.todoData = false;
     }
 }
 

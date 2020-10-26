@@ -40,7 +40,7 @@ class AddToDo extends Controller {
             if (!ctype_alpha($todoCategory)){
                 array_push($errors, 'No category filled');
             }
-            if (!$this->validateDate($scheduleTime) || date_create($scheduleTime) > date_create('now')){
+            if (!$this->validateDate($scheduleTime) || (date_create('now') > date_create($scheduleTime))){
                 array_push($errors, 'Invalid schedule time');
             }
 
