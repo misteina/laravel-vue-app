@@ -130,7 +130,7 @@ class BackEndTest extends TestCase
         $response = $this->actingAs($user)->json(
             'POST', 
             '/todo/add',
-            ['title' => 'My Todo title', 'body' => 'My Todo body', 'category' => 'other', 'time' => date('Y-m-d H:i')]
+            ['title' => 'My Todo title', 'body' => 'My Todo body', 'category' => 'other', 'time' => date('3000-m-d H:i')]
         );
         $response->assertJson(['success' => 'done']);
     }
@@ -192,15 +192,15 @@ class BackEndTest extends TestCase
         $response = $this->actingAs($user)->json(
             'POST',
             '/todo/delete',
-            ['id' => date('Y-m-d').' 00:00:00']
+            ['id' => date('Y-m-d').' 00:00']
         );
-        $response->assertDontSeeText(date('Y-m-d').' 00:00:00');
+        $response->assertDontSeeText(date('Y-m-d').' 00:00');
     }
 
 
     public function testUserLogOut(){
         $user = User::factory()->make();
-        $response = $this->actingAs($user)->json('POST', '/logout');
+        $response = $this->actingAs($user)->json('GET', '/logout');
         $response->assertRedirect('/signin');
     }
 

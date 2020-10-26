@@ -37,4 +37,4 @@ Route::post('/signin', SignIn::class);
 
 Route::post('/signup', SignUp::class);
 
-Route::post('/logout', LogOut::class);
+Route::get('/logout', LogOut::class);

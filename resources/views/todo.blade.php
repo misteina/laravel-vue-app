@@ -18,7 +18,6 @@
                 <select class="custom-select" id="selectCategory" v-model="category">
                     <option selected value="all">All</option>
                     <option v-for="cat in showCategories">@{{ cat }}</option>
-                    <option v-if="Object.keys(showCategories).length === 0" selected>None</option>
                 </select>
             </div>
           <button type="button" v-on:click="getTodos" class="btn btn-secondary btn-lg btn-block" id="list-button">List Todos</button>  

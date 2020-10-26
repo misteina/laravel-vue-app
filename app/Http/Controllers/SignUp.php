@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Exception;
 
 
 class SignUp extends Controller
@@ -35,7 +36,11 @@ class SignUp extends Controller
 
                 $validatedData['password'] = Hash::make($request->password);
 
-                $id = DB::table('users')->insertGetId($validatedData);
+                try {
+                    $id = DB::table('users')->insertGetId($validatedData);
+                } catch (Exception $e){
+                    return view('/signup', ['error' => ['Your email exists']]);
+                }
 
                 if (is_int($id)){
                     return redirect('/signin')->with('registered', true);

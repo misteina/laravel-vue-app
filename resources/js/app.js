@@ -1,8 +1,5 @@
-require('./bootstrap');
-
 import SignIn from './SignIn';
 import ToDo from './ToDo';
-//import NotFound from './NotFound';
 import SignUp from './SignUp';
 
 const Routes = {
@@ -11,7 +8,6 @@ const Routes = {
     '/todo' : ToDo
 };
 
-const Page = Routes[window.location.pathname] || NotFound;
+const Template = Routes[window.location.pathname] || null;
 
-
-Vue.createApp(Page).mount('#app');
+Vue.createApp(Template).mount('#app');

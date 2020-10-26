@@ -37,7 +37,7 @@ class DeleteToDo extends Controller
         }
     }
 
-    private function validateDate($date, $format = 'Y-m-d H:i:s') {
+    private function validateDate($date, $format = 'Y-m-d H:i') {
         $d = date_create_from_format($format, $date);
         return $d && $d->format($format) === $date;
     }
