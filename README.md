@@ -10,6 +10,14 @@
 
 5. Visit `localhost:8080` or `localhost:<port>` from your browser to open the application with `<port>` representing the configured port if you changed the port in step 3 under the Nginx service in the docker-compose.yml file.
 
+6. Create a MYSQL user by first running the following command on the db container: `docker-compose exec db bash` from the downloaded folder in step 1.
+
+7. Log into the root account: `mysql -u root -p` using the root password `9j5gyg5t`.
+
+8. Run the following query at the mysql prompt to add a user and password: `GRANT ALL ON laravel.* TO 'app'@'%' IDENTIFIED BY '5t47ht7';` and flush privileges: `FLUSH PRIVILEGES;`, then exit the mysql prompt `EXIT;` and finally `exit` the container.
+
+9. Run the following command to migrate the database tables: `docker-compose exec app php artisan migrate`
+
 
 ### Additional note
 
